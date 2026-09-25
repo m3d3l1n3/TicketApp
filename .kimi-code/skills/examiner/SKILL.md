@@ -19,6 +19,24 @@ Follow this protocol exactly. Its purpose is to keep the examiner **isolated fro
 history**: subagents start with zero context, so do not pass them hints, past mistakes, known
 weaknesses, or previous submissions.
 
+## Scope manifest (MANDATORY — prevents assessing untaught topics)
+
+Before launching any examiner subagent, read `notes/progress.md` in the workspace root. It lists
+topics the candidate has actually been taught (**in scope**) and topics not yet covered (**out of
+scope**).
+
+- The scope manifest is NOT tutoring history: sharing it is required. Sharing weaknesses, past
+  submissions, or hints remains forbidden.
+- The Phase 1 prompt must include the in-scope/out-of-scope lists **verbatim** and instruct the
+  examiner that requirements, acceptance criteria, and follow-up questions may only touch
+  in-scope topics — even if the repo contains scaffolding for out-of-scope topics (e.g. an unused
+  test project).
+- If the returned briefing contains any requirement depending on an out-of-scope topic, DO NOT
+  present it to the user. Point the defect out to the examiner subagent (resume it) and have it
+  reissue a corrected briefing.
+- The Phase 3 grading prompt must also include the scope lists and instruct the grader to
+  disregard any part of the submission touching out-of-scope topics.
+
 ## Phase 1 — Issue the task (fresh subagent)
 
 Launch a subagent (Agent tool, `explore` type — it is read-only) with this prompt, filling in the
@@ -29,15 +47,24 @@ difficulty and the absolute workspace path:
 >
 > Working directory: <ABSOLUTE WORKSPACE PATH>
 >
+> SCOPE CONSTRAINTS (binding): The candidate has been taught ONLY these topics, and the task may
+> assess ONLY these:
+> <PASTE IN-SCOPE LIST FROM notes/progress.md>
+> The following topics have NOT been taught and must not appear in requirements, acceptance
+> criteria, or follow-up questions — even if scaffolding for them exists in the repo:
+> <PASTE OUT-OF-SCOPE LIST FROM notes/progress.md>
+>
 > 1. Briefly inspect the repository structure (READ-ONLY — never modify anything) to understand
 >    what exists: languages, frameworks, current exercises, and what the candidate has already
->    built.
+>    built. Treat out-of-scope scaffolding (e.g. an untouched test project) as nonexistent.
 > 2. Design ONE assessment task that a real employer might set a graduate/junior engineer. Prefer
->    realistic business-software tasks: implementing a small business requirement, extending an
->    ASP.NET Core endpoint, debugging broken code, writing a LINQ or SQL query, adding validation,
->    adding unit tests, reasoning about REST behavior, reviewing code, or a small
+>    realistic business-software tasks, restricted to the in-scope topics above: implementing a
+>    small business requirement, extending existing C# code, debugging broken code, writing a LINQ
+>    query, adding validation, reasoning about behavior, reviewing code, or a small
 >    algorithm/data-structure task (arrays, strings, hash maps/sets, stacks, queues, sorting,
->    binary search, two pointers, sliding window, basic recursion, simple linked lists). If the
+>    binary search, two pointers, sliding window, basic recursion, simple linked lists). Only
+>    include task types whose topics appear in the in-scope list (e.g. no unit-testing
+>    requirements unless unit testing is listed as in scope). If the
 >    repo already contains a project, prefer extending or fixing that project over a standalone
 >    exercise. Scale scope and time box to the difficulty.
 > 3. Return a complete task briefing: title, scenario/user story, numbered requirements,
@@ -68,6 +95,13 @@ On submission, launch a NEW subagent (Agent tool, `explore` type, read-only) wit
 > You are a technical examiner grading a Graduate Software Engineer assessment submission.
 >
 > Working directory: <ABSOLUTE WORKSPACE PATH>
+>
+> SCOPE CONSTRAINTS (binding): The candidate has only been taught the following topics:
+> <PASTE IN-SCOPE LIST FROM notes/progress.md>
+> These topics have NOT been taught and must not factor into grading:
+> <PASTE OUT-OF-SCOPE LIST FROM notes/progress.md>
+> If any task requirement touches an out-of-scope topic, grade the submission as if that
+> requirement did not exist, and note the scope violation in your report.
 >
 > The task you set was:
 >

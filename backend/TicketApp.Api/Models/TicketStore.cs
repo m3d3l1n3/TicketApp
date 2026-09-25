@@ -39,5 +39,32 @@ namespace TicketApp.Api.Models
         {
             return tickets.Where(t => t.ProjectId == projectId).ToList();
         }
+
+        //Part A
+        public List<Ticket> GetCurrentTickets()
+        {
+            return tickets.Where(t => t.Status != TicketStatus.Resolved && t.Status != TicketStatus.Closed).OrderByDescending(t => t.Priority).ThenBy(t => !t.DueDate.HasValue).ThenBy(t => t.DueDate).ToList();
+        }
+        public ProjectReport GetProjectReport(int projectId)
+        {
+
+            int total = tickets.Count(t => t.ProjectId == projectId); //total
+            int open = tickets.Count(t => t.ProjectId == projectId && t.Status != TicketStatus.Resolved && t.Status != TicketStatus.Closed); //open tickets
+            int overdue = tickets.Count(t => t.ProjectId == projectId && t.DueDate < DateOnly.FromDateTime(DateTime.Today) && t.Status != TicketStatus.Closed); //overdue tickets
+
+            var ticket = tickets.Where(t => t.ProjectId == projectId && t.DueDate >= DateOnly.FromDateTime(DateTime.Today)).OrderBy(t => !t.DueDate.HasValue).ThenBy(t => t.DueDate).FirstOrDefault();
+            ProjectReport report = new(projectId, total, open, overdue, ticket?.DueDate);
+
+            return report;
+        }
+        public List<ProjectReport> GetAllProjectReports()
+        {
+            return tickets.GroupBy(t => t.ProjectId).Select(t => new ProjectReport(
+                t.Key,
+                t.Count(),
+                t.Count(t => t.Status != TicketStatus.Resolved && t.Status != TicketStatus.Closed),
+                t.Count(t => t.DueDate < DateOnly.FromDateTime(DateTime.Today) && t.Status != TicketStatus.Closed),
+                t.Where(g => g.DueDate.HasValue && g.DueDate >= DateOnly.FromDateTime(DateTime.Today)).OrderBy(g => g.DueDate).FirstOrDefault()?.DueDate)).ToList();
+        }
     }
 }

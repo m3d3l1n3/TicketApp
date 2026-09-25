@@ -16,12 +16,21 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 TicketStore store = new();
-Ticket ticket = new(1, "Opening error", "issue when trying to open");
+Ticket ticket = new(1, "Opening error", "issue when trying to open")
+{
+    ProjectId = 1
+};
 store.AddTicket(ticket);
-Ticket ticket2 = new(2, "Map rendering error", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis lorem lectus, porta ut efficitur ac, imperdiet sed nisl. Praesent aliquet lectus ac auctor posuere. Donec vitae facilisis turpis. Aenean commodo tincidunt leo, fermentum fermentum purus molestie eget. Praesent porta ante rhoncus lacus varius rhoncus ut eu sem.");
+Ticket ticket2 = new(2, "Map rendering error", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis lorem lectus, porta ut efficitur ac, imperdiet sed nisl. Praesent aliquet lectus ac auctor posuere. Donec vitae facilisis turpis. Aenean commodo tincidunt leo, fermentum fermentum purus molestie eget. Praesent porta ante rhoncus lacus varius rhoncus ut eu sem.")
+{
+    ProjectId = 3
+};
 ticket2.StartProgress();
 store.AddTicket(ticket2);
-Ticket ticket3 = new(3, "Inventory related issue", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis lorem lectus, porta ut efficitur ac, imperdiet sed nisl. Praesent aliquet lectus ac auctor posuere. Donec vitae facilisis turpis. Aenean commodo tincidunt leo, fermentum fermentum purus molestie eget. Praesent porta ante rhoncus lacus varius rhoncus ut eu sem.");
+Ticket ticket3 = new(3, "Inventory related issue", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis lorem lectus, porta ut efficitur ac, imperdiet sed nisl. Praesent aliquet lectus ac auctor posuere. Donec vitae facilisis turpis. Aenean commodo tincidunt leo, fermentum fermentum purus molestie eget. Praesent porta ante rhoncus lacus varius rhoncus ut eu sem.")
+{
+    ProjectId = 4
+};
 ticket3.DueDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
 store.AddTicket(ticket3);
 Ticket ticket4 = new(4, "Subtitles not rendering", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis lorem lectus, porta ut efficitur ac, imperdiet sed nisl. Praesent aliquet lectus ac auctor posuere. Donec vitae facilisis turpis. Aenean commodo tincidunt leo, fermentum fermentum purus molestie eget. Praesent porta ante rhoncus lacus varius rhoncus ut eu sem.");
@@ -35,8 +44,10 @@ ticket5.Resolve();
 ticket5.Close();
 store.AddTicket(ticket5);
 Ticket ticket6 = new(6, "Phase thru walls", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis lorem lectus, porta ut efficitur ac, imperdiet sed nisl. Praesent aliquet lectus ac auctor posuere. Donec vitae facilisis turpis. Aenean commodo tincidunt leo, fermentum fermentum purus molestie eget. Praesent porta ante rhoncus lacus varius rhoncus ut eu sem.");
-ticket6.ProjectId = 1;
-ticket6.Priority = TicketPriority.Medium;
+// {
+// ProjectId = 1,
+// Priority = TicketPriority.Medium
+// };
 store.AddTicket(ticket6);
 
 var tickets = store.GetTickets();
@@ -55,14 +66,13 @@ foreach (var item in dir3)
 {
     Console.WriteLine($"Tickets overdue: {item.Title}, {item.Id}");
 }
-var dir4 = store.GetTicketsByProject(1);
-foreach (var item in dir4)
+var dir4 = store.GetProjectReport(1);
+Console.WriteLine($"PR: {dir4.ProjectId} {dir4.OpenTickets} {dir4.OverdueTickets} {dir4.EarliestDueDate}");
+var d = store.GetAllProjectReports();
+foreach (var rep in d)
 {
-    Console.WriteLine($"Tickets by project: {item.Id}");
-}
-foreach (Ticket t in tickets)
-{
-    Console.WriteLine($"ticket id: {t.Id}, ticket status: {t.Status}, ticket title: {t.Title}");
+    Console.WriteLine($"PR: {rep.ProjectId} {rep.OpenTickets} {rep.OverdueTickets} {rep.EarliestDueDate}");
+
 }
 app.Run();
 

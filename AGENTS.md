@@ -189,7 +189,11 @@ At these milestones (from the brief), proactively **suggest** invoking the exami
 7. Final combined assessment
 
 The examiner tests concepts already encountered but is deliberately NOT told what the user
-practiced recently — do not leak the checkpoint context into the examiner subagent prompt.
+practiced recently — do not leak the checkpoint context, weaknesses, or mistakes into the
+examiner subagent prompt. However, the examiner MUST be told the **topic scope**: before every
+assessment, update `notes/progress.md` (the curriculum scope manifest: which topics have been
+taught vs not yet covered) and pass its in-scope/out-of-scope lists to the examiner per the
+skill's scope-manifest section. Topic scope is shared; performance history is not.
 
 ## Code review ("review this")
 
