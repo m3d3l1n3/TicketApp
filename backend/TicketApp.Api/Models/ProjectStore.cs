@@ -18,11 +18,11 @@ namespace TicketApp.Api.Models
         }
         public List<Project> GetProjects()
         {
-            return projects.ToList();
+            return projects.OrderBy(p => p.Name).ToList();
         }
         public bool ExistProject(int id)
         {
-            if (projects.FirstOrDefault(t => t.Id == id) is not null) return true;
+            if (projects.Any(p => p.Id == id)) return true;
             else return false;
         }
     }

@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using TicketApp.Api.Models;
 namespace TicketApp.Api.Controllers
 {
     public class UpdateTicketRequest

@@ -8,26 +8,33 @@ scaffolded during setup but testing has not been taught).
 
 ## Current stage
 
-Completed: Stage 1 (C# domain model), Stage 2 (Collections & LINQ).
-Next up: Stage 3 (ASP.NET Core API).
+Completed: Stage 1 (C# domain model), Stage 2 (Collections & LINQ), Stage 3 (ASP.NET Core API).
+Next up: Stage 4 (SQL fundamentals).
 
 ## In scope (may be assessed)
 
 - C# fundamentals: classes, enums, properties (auto-properties, private setters), constructors,
-  fields, `readonly`, namespaces, naming conventions
-- Nullable reference/value types (`string?`, `DateOnly?`, `.HasValue`)
-- Exceptions for business-rule enforcement (`ArgumentException`, `InvalidOperationException`)
+  constructor chaining, fields, `readonly`, namespaces, naming conventions
+- Nullable reference/value types (`string?`, `DateOnly?`, `.HasValue`), null-conditional `?.`
+- Exceptions for business-rule enforcement (`ArgumentException`, `InvalidOperationException`),
+  try/catch, exception-type-driven error mapping
 - Collections: `List<T>`, `Dictionary<K,V>`, `IEnumerable<T>`, arrays
 - LINQ (method syntax): `Where`, `Select`, `OrderBy`/`OrderByDescending`, `ThenBy`, `GroupBy`,
-  `ToDictionary`, `ToList`, `FirstOrDefault`, `Any`, `Count`; lazy evaluation concept
-- `DateTime`/`DateOnly` basics
+  `ToDictionary`, `ToList`, `FirstOrDefault`, `Any`, `Count`, `Max`; lazy evaluation and
+  conditional query composition
+- `DateTime`/`DateOnly` basics, `Interlocked.Increment`
 - Encapsulation, domain-model business rules, state-machine style transition guards
-- Git basics: init, add, commit, branch, remotes, push
+- ASP.NET Core Web API: controllers, attribute routing (`[Route]`, `[HttpGet]`/`[HttpPost]`/
+  `[HttpPut]`/`[HttpDelete]`, route parameters, literal-vs-parameter precedence), `ControllerBase`,
+  `ActionResult<T>`/`IActionResult`, dependency injection (constructor injection, singleton
+  lifetime, `builder.Services`, `MapControllers`), DTOs (`required` modifier), model binding
+  (body, route, query string), enum binding by name, HTTP status codes (200/201/204/400/404/409),
+  ProblemDetails responses, REST semantics (sub-action endpoints vs field updates, idempotency)
+- Git basics: init, add, commit, branch, remotes, push; GitHub CLI auth
 
 ## Out of scope (NOT yet taught — must not be assessed)
 
 - Unit testing / xUnit (Stage 7) — test project exists but is scaffolding only
-- ASP.NET Core: controllers, routing, DI, DTOs, model binding, HTTP status codes (Stage 3)
 - SQL (Stage 4)
 - Entity Framework Core (Stage 5)
 - Service layer / SOLID beyond basic encapsulation (Stage 6)
@@ -40,6 +47,5 @@ Next up: Stage 3 (ASP.NET Core API).
 
 ## Notes for the examiner
 
-- The repo's `TicketApp.Api` is an ASP.NET Core project template, but only plain C#
-  classes/LINQ in `Models/` have been taught — the web layer has not.
+- The API persists nothing; the in-memory `TicketStore` is a deliberate Stage 3 design, not a gap.
 - `TicketApp.Tests` contains only the default xUnit template; ignore it entirely.

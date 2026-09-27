@@ -1,16 +1,14 @@
-using System.Reflection.Metadata.Ecma335;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using TicketApp.Api.Models;
 namespace TicketApp.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProjectController : ControllerBase
+    public class ProjectsController : ControllerBase
     {
         private readonly ProjectStore store;
         private readonly TicketStore tickets;
-        public ProjectController(ProjectStore store, TicketStore tickets)
+        public ProjectsController(ProjectStore store, TicketStore tickets)
         {
             this.store = store;
             this.tickets = tickets;
@@ -37,6 +35,8 @@ namespace TicketApp.Api.Controllers
         {
             try
             {
+                if (!store.ExistProject(id))
+                    return NotFound("Project does not exist");
                 return Ok(tickets.GetProjectReport(id));
             }
             catch (ArgumentException)
@@ -51,7 +51,8 @@ namespace TicketApp.Api.Controllers
             {
                 Project project = new(store.GetNextId(), request.Name, request.Description);
                 store.AddProject(project);
-                return Ok(project);
+                return CreatedAtAction(nameof(GetProject), new { project.Id }, project);
+
             }
             catch (ArgumentException e)
             {

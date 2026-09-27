@@ -110,6 +110,12 @@ On submission, launch a NEW subagent (Agent tool, `explore` type, read-only) wit
 > 1. Inspect the candidate's implementation (READ-ONLY — never modify or "fix" their code). You
 >    may run verification commands (`dotnet build`, `dotnet test`, `npm test`, etc.) to check
 >    behavior, but change nothing.
+>    BEFORE exercising any running application: check for stale instances of it
+>    (`Get-Process dotnet` / port conflicts on Windows), stop them, rebuild fresh, and run the
+>    app yourself on a port YOU choose — then curl only that port. If observed runtime behavior
+>    contradicts the code on disk, suspect a stale process or post-submission edits, re-verify,
+>    and note the discrepancy explicitly in your report rather than grading phantom behavior.
+>    Record `git status`/`git log` output in your report so the graded snapshot is unambiguous.
 > 2. Evaluate what the candidate actually demonstrated. Grade what is there, not what could have
 >    been.
 > 3. Produce an assessment report:

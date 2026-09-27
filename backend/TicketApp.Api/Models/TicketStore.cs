@@ -51,16 +51,13 @@ namespace TicketApp.Api.Models
         public ProjectReport GetProjectReport(int projectId)
         {
             int total = tickets.Count(t => t.ProjectId == projectId); //total
-            if (total > 0)
-            {
-                int open = tickets.Count(t => t.ProjectId == projectId && t.Status != TicketStatus.Resolved && t.Status != TicketStatus.Closed); //open tickets
-                int overdue = tickets.Count(t => t.ProjectId == projectId && t.DueDate < DateOnly.FromDateTime(DateTime.Today) && t.Status != TicketStatus.Closed); //overdue tickets
 
-                var ticket = tickets.Where(t => t.ProjectId == projectId && t.DueDate >= DateOnly.FromDateTime(DateTime.Today)).OrderBy(t => !t.DueDate.HasValue).ThenBy(t => t.DueDate).FirstOrDefault();
-                ProjectReport report = new(projectId, total, open, overdue, ticket?.DueDate);
-                return report;
-            }
-            else throw new ArgumentException("Project does not exist");
+            int open = tickets.Count(t => t.ProjectId == projectId && t.Status != TicketStatus.Resolved && t.Status != TicketStatus.Closed); //open tickets
+            int overdue = tickets.Count(t => t.ProjectId == projectId && t.DueDate < DateOnly.FromDateTime(DateTime.Today) && t.Status != TicketStatus.Closed); //overdue tickets
+
+            var ticket = tickets.Where(t => t.ProjectId == projectId && t.DueDate >= DateOnly.FromDateTime(DateTime.Today)).OrderBy(t => !t.DueDate.HasValue).ThenBy(t => t.DueDate).FirstOrDefault();
+            ProjectReport report = new(projectId, total, open, overdue, ticket?.DueDate);
+            return report;
         }
         public List<ProjectReport> GetAllProjectReports()
         {

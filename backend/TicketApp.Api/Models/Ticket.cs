@@ -1,6 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
-using Microsoft.VisualBasic;
-
 namespace TicketApp.Api.Models
 {
     public class Ticket
@@ -30,7 +27,7 @@ namespace TicketApp.Api.Models
         {
             if (!string.IsNullOrWhiteSpace(title))
                 this.Title = title;
-            else throw new InvalidOperationException("Ticket title cannot be empty");
+            else throw new ArgumentException("Ticket title cannot be empty");
             Id = id;
             this.Description = description;
             this.Status = TicketStatus.Open;
@@ -90,10 +87,10 @@ namespace TicketApp.Api.Models
         {
             if (!string.IsNullOrWhiteSpace(title))
                 Title = title;
-            else throw new InvalidOperationException("Ticket title cannot be empty");
+            else throw new ArgumentException("Ticket title cannot be empty");
             if (!string.IsNullOrWhiteSpace(description))
                 Description = description;
-            else throw new InvalidOperationException("Ticket description cannot be empty");
+            else throw new ArgumentException("Ticket description cannot be empty");
 
             DueDate = dueDate;
             ProjectId = projectId;
