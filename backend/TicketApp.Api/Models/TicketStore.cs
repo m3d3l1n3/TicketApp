@@ -2,11 +2,14 @@ namespace TicketApp.Api.Models
 {
     public class TicketStore
     {
+        private int nextId;
         private readonly List<Ticket> tickets = [];
         public void AddTicket(Ticket ticket)
         {
             tickets.Add(ticket);
         }
+        public int GetNextId() => Interlocked.Increment(ref nextId);
+
         public Ticket GetTicket(int id)
         {
             var res = tickets.FirstOrDefault(t => t.Id == id);
@@ -65,6 +68,25 @@ namespace TicketApp.Api.Models
                 t.Count(t => t.Status != TicketStatus.Resolved && t.Status != TicketStatus.Closed),
                 t.Count(t => t.DueDate < DateOnly.FromDateTime(DateTime.Today) && t.Status != TicketStatus.Closed),
                 t.Where(g => g.DueDate.HasValue && g.DueDate >= DateOnly.FromDateTime(DateTime.Today)).OrderBy(g => g.DueDate).FirstOrDefault()?.DueDate)).ToList();
+        }
+        public bool DeleteTicket(int id)
+        {
+            var ticket = tickets.FirstOrDefault(t => t.Id == id);
+            if (ticket is not null)
+            {
+                tickets.Remove(ticket);
+                return true;
+            }
+            return false;
+        }
+        public List<Ticket> GetTickets(TicketStatus? status, TicketPriority? priority)
+        {
+            var query = tickets as IEnumerable<Ticket>;
+            if (status is not null)
+                query = query.Where(t => t.Status == status);
+            if (priority is not null)
+                query = query.Where(t => t.Priority == priority);
+            return query.ToList();
         }
     }
 }

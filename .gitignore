@@ -482,3 +482,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Personal study notes
+TECHNICAL_TEST_CONCEPTS.md

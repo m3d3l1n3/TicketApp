@@ -1,10 +1,13 @@
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.VisualBasic;
+
 namespace TicketApp.Api.Models
 {
     public class Ticket
     {
         public DateTime CreatedAt { get; private set; }
         public DateOnly? DueDate { get; set; }
-        public string Title { get; }
+        public string Title { get; private set; }
         public string Description { get; private set; }
         public TicketStatus Status { get; private set; }
         public TicketPriority Priority { get; private set; }
@@ -17,13 +20,25 @@ namespace TicketApp.Api.Models
             if (!string.IsNullOrWhiteSpace(title))
                 this.Title = title;
             else throw new ArgumentException("Ticket title cannot be empty");
-            this.Id = id;
+            Id = id;
             this.Description = description;
             this.Status = TicketStatus.Open;
             this.CreatedAt = DateTime.UtcNow;
             this.Priority = priority;
         }
-
+        public Ticket(int id, string title, string description, int projectId, DateOnly? dueDate, TicketPriority priority = TicketPriority.Low)
+        {
+            if (!string.IsNullOrWhiteSpace(title))
+                this.Title = title;
+            else throw new InvalidOperationException("Ticket title cannot be empty");
+            Id = id;
+            this.Description = description;
+            this.Status = TicketStatus.Open;
+            this.CreatedAt = DateTime.UtcNow;
+            this.Priority = priority;
+            this.ProjectId = projectId;
+            this.DueDate = dueDate;
+        }
         public void StartProgress()
         {
             if (Status == TicketStatus.Open)
@@ -70,6 +85,18 @@ namespace TicketApp.Api.Models
                 }
             else throw new InvalidOperationException("Cannot escalate ticket. Only open tickets for over 7 days can be escalated.");
 
+        }
+        public void Update(string title, string description, DateOnly? dueDate, int projectId)
+        {
+            if (!string.IsNullOrWhiteSpace(title))
+                Title = title;
+            else throw new InvalidOperationException("Ticket title cannot be empty");
+            if (!string.IsNullOrWhiteSpace(description))
+                Description = description;
+            else throw new InvalidOperationException("Ticket description cannot be empty");
+
+            DueDate = dueDate;
+            ProjectId = projectId;
         }
     }
 }
