@@ -1,5 +1,3 @@
-using Microsoft.VisualBasic;
-
 namespace TicketApp.Api.Models
 {
     public class CreateTicketRequest

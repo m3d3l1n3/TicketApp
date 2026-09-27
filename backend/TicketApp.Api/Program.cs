@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddSingleton<TicketStore>();
+builder.Services.AddSingleton<ProjectStore>();
 var app = builder.Build();
 app.MapControllers();
 // Configure the HTTP request pipeline.

@@ -36,8 +36,8 @@ namespace TicketApp.Api.Models
             this.Status = TicketStatus.Open;
             this.CreatedAt = DateTime.UtcNow;
             this.Priority = priority;
-            this.ProjectId = projectId;
             this.DueDate = dueDate;
+            this.ProjectId = projectId;
         }
         public void StartProgress()
         {

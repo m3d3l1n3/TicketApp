@@ -7,9 +7,12 @@ namespace TicketApp.Api.Controllers
     public class TicketsController : ControllerBase
     {
         private readonly TicketStore store;
-        public TicketsController(TicketStore store)
+        private readonly ProjectStore projects;
+
+        public TicketsController(TicketStore store, ProjectStore projects)
         {
             this.store = store;
+            this.projects = projects;
         }
 
         [HttpGet("{id}")]
@@ -27,6 +30,8 @@ namespace TicketApp.Api.Controllers
         {
             try
             {
+                if (!projects.ExistProject(request.ProjectId))
+                    return BadRequest("Project id is invalid.");
                 var ticket = new Ticket(store.GetNextId(), request.Title, request.Description, request.ProjectId, request.DueDate, request.Priority);
                 store.AddTicket(ticket);
                 return CreatedAtAction(nameof(GetTicket), new { ticket.Id }, ticket);
@@ -141,9 +146,9 @@ namespace TicketApp.Api.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteTicket(int id) => store.DeleteTicket(id) ? NoContent() : NotFound();
         [HttpGet]
-        public List<Ticket> GetAll(TicketStatus? status, TicketPriority? priority)
+        public List<Ticket> GetAll(TicketStatus? status, TicketPriority? priority, bool overdue)
         {
-            return store.GetTickets(status, priority);
+            return store.GetTickets(status, priority, overdue);
         }
     }
 }

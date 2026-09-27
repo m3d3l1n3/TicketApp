@@ -50,15 +50,17 @@ namespace TicketApp.Api.Models
         }
         public ProjectReport GetProjectReport(int projectId)
         {
-
             int total = tickets.Count(t => t.ProjectId == projectId); //total
-            int open = tickets.Count(t => t.ProjectId == projectId && t.Status != TicketStatus.Resolved && t.Status != TicketStatus.Closed); //open tickets
-            int overdue = tickets.Count(t => t.ProjectId == projectId && t.DueDate < DateOnly.FromDateTime(DateTime.Today) && t.Status != TicketStatus.Closed); //overdue tickets
+            if (total > 0)
+            {
+                int open = tickets.Count(t => t.ProjectId == projectId && t.Status != TicketStatus.Resolved && t.Status != TicketStatus.Closed); //open tickets
+                int overdue = tickets.Count(t => t.ProjectId == projectId && t.DueDate < DateOnly.FromDateTime(DateTime.Today) && t.Status != TicketStatus.Closed); //overdue tickets
 
-            var ticket = tickets.Where(t => t.ProjectId == projectId && t.DueDate >= DateOnly.FromDateTime(DateTime.Today)).OrderBy(t => !t.DueDate.HasValue).ThenBy(t => t.DueDate).FirstOrDefault();
-            ProjectReport report = new(projectId, total, open, overdue, ticket?.DueDate);
-
-            return report;
+                var ticket = tickets.Where(t => t.ProjectId == projectId && t.DueDate >= DateOnly.FromDateTime(DateTime.Today)).OrderBy(t => !t.DueDate.HasValue).ThenBy(t => t.DueDate).FirstOrDefault();
+                ProjectReport report = new(projectId, total, open, overdue, ticket?.DueDate);
+                return report;
+            }
+            else throw new ArgumentException("Project does not exist");
         }
         public List<ProjectReport> GetAllProjectReports()
         {
@@ -79,13 +81,15 @@ namespace TicketApp.Api.Models
             }
             return false;
         }
-        public List<Ticket> GetTickets(TicketStatus? status, TicketPriority? priority)
+        public List<Ticket> GetTickets(TicketStatus? status, TicketPriority? priority, bool overdue = false)
         {
             var query = tickets as IEnumerable<Ticket>;
             if (status is not null)
                 query = query.Where(t => t.Status == status);
             if (priority is not null)
                 query = query.Where(t => t.Priority == priority);
+            if (overdue)
+                query = query.Where(t => t.DueDate < DateOnly.FromDateTime(DateTime.Today) && t.Status != TicketStatus.Closed);
             return query.ToList();
         }
     }
