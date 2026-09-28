@@ -8,8 +8,6 @@ namespace TicketApp.Api.Controllers
     [Route("api/[controller]")]
     public class TicketsController : ControllerBase
     {
-        // private readonly TicketStore store;
-        // private readonly ProjectStore projects;
         private readonly AppDbContext context;
         public TicketsController(AppDbContext context) { this.context = context; }
 

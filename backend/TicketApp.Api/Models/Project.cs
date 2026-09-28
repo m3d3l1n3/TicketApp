@@ -16,6 +16,14 @@ namespace TicketApp.Api.Models
 
             Description = description;
         }
+        public Project(string name, string? description)
+        {
+            if (!string.IsNullOrWhiteSpace(name))
+                this.Name = name;
+            else throw new ArgumentException("Project name cannot be empty.");
+
+            Description = description;
+        }
 
     }
 }
