@@ -9,7 +9,7 @@ namespace TicketApp.Api.Models
         public TicketStatus Status { get; private set; }
         public TicketPriority Priority { get; private set; }
         public int ProjectId { get; set; }
-        public int Id { get; }
+        public int Id { get; private set; }
 
 
         public Ticket(int id, string title, string description, TicketPriority priority = TicketPriority.Low)
@@ -29,6 +29,18 @@ namespace TicketApp.Api.Models
                 this.Title = title;
             else throw new ArgumentException("Ticket title cannot be empty");
             Id = id;
+            this.Description = description;
+            this.Status = TicketStatus.Open;
+            this.CreatedAt = DateTime.UtcNow;
+            this.Priority = priority;
+            this.DueDate = dueDate;
+            this.ProjectId = projectId;
+        }
+        public Ticket(string title, string description, int projectId, DateOnly? dueDate, TicketPriority priority = TicketPriority.Low)
+        {
+            if (!string.IsNullOrWhiteSpace(title))
+                this.Title = title;
+            else throw new ArgumentException("Ticket title cannot be empty");
             this.Description = description;
             this.Status = TicketStatus.Open;
             this.CreatedAt = DateTime.UtcNow;
