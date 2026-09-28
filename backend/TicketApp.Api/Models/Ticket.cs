@@ -36,17 +36,17 @@ namespace TicketApp.Api.Models
             this.DueDate = dueDate;
             this.ProjectId = projectId;
         }
-        public Ticket(string title, string description, int projectId, DateOnly? dueDate, TicketPriority priority = TicketPriority.Low)
+        public Ticket(string title, string description, int projectId, DateOnly? dueDate, TicketPriority priority = TicketPriority.Low, DateTime? createdAt = null)
         {
             if (!string.IsNullOrWhiteSpace(title))
                 this.Title = title;
             else throw new ArgumentException("Ticket title cannot be empty");
             this.Description = description;
             this.Status = TicketStatus.Open;
-            this.CreatedAt = DateTime.UtcNow;
             this.Priority = priority;
             this.DueDate = dueDate;
             this.ProjectId = projectId;
+            CreatedAt = createdAt ?? DateTime.UtcNow;
         }
         public void StartProgress()
         {
@@ -75,9 +75,9 @@ namespace TicketApp.Api.Models
             else throw new InvalidOperationException("Cannot set ticket to open status. Only closed tickets can be set to (re)open.");
 
         }
-        public void PriorityEscalation()
+        public void PriorityEscalation(DateTime now)
         {
-            if (Status == TicketStatus.Open && CreatedAt < DateTime.Today.AddDays(-7))
+            if (Status == TicketStatus.Open && CreatedAt < now.AddDays(-7))
                 switch (Priority)
                 {
                     case TicketPriority.Low:

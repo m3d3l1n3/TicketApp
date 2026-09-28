@@ -40,10 +40,12 @@ Stage 4 (SQL fundamentals), Stage 5 (EF Core). Next up: Stage 6 (service layer /
   translation, change tracking, Add/SaveChanges/Remove/ExecuteDelete, AsNoTracking for reads,
   IDENTITY-backed id generation, enum-as-int storage convention
 - Git basics: init, add, commit, branch, remotes, push; GitHub CLI auth
+- Unit testing with xUnit: [Fact]/[Theory]/[InlineData] (constant-only), Arrange-Act-Assert,
+  Assert.Equal/Throws, test naming (Method_Scenario_Expectation), testing domain rules and
+  exception paths, injecting time as data (clock seam) for testability
 
 ## Out of scope (NOT yet taught — must not be assessed)
 
-- Unit testing / xUnit (Stage 7) — test project exists but is scaffolding only
 - Service layer / SOLID beyond basic encapsulation (Stage 6)
 - async/await (Stage 8)
 - React / TypeScript (Stage 9)
@@ -57,6 +59,7 @@ Stage 4 (SQL fundamentals), Stage 5 (EF Core). Next up: Stage 6 (service layer /
 - The API is EF Core-backed against LocalDB database `TicketAppEfDb` (migrations in
   `backend/TicketApp.Api/Migrations`). A separate hand-written `TicketAppDb` from Stage 4 also
   exists for pure-SQL tasks.
+- `TicketApp.Tests` contains real xUnit tests for the domain classes (no EF/controller testing
+  yet — DbContext-based tests, WebApplicationFactory, and mocking frameworks are NOT covered).
 - The in-memory TicketStore/ProjectStore were deleted during the EF migration — their absence is
   deliberate, not a gap.
-- `TicketApp.Tests` contains only the default xUnit template; ignore it entirely.
