@@ -1,9 +1,9 @@
-namespace TicketApp.Api.Controllers
+namespace TicketApp.Api.Models
 {
     public class UpdateTicketRequest
     {
-        public required String Title { get; set; }
-        public required String Description { get; set; }
+        public required string Title { get; set; }
+        public required string Description { get; set; }
         public DateOnly? DueDate { get; set; }
         public int ProjectId { get; set; }
     }

@@ -1,24 +1,26 @@
 using Microsoft.AspNetCore.Mvc;
 using TicketApp.Api.Models;
-using TicketApp.Api.Data;
-using Microsoft.EntityFrameworkCore;
+using TicketApp.Api.Services;
 namespace TicketApp.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class TicketsController : ControllerBase
     {
-        private readonly AppDbContext context;
-        public TicketsController(AppDbContext context) { this.context = context; }
+        private readonly ITicketService ticketService;
+        public TicketsController(ITicketService ticketService) { this.ticketService = ticketService; }
 
         [HttpGet("{id}")]
         public ActionResult<Ticket> GetTicket(int id)
         {
-            var ticket = context.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == id);
-            if (ticket is null)
-                return NotFound();
-            return Ok(ticket);
-
+            try
+            {
+                return Ok(ticketService.GetTicket(id));
+            }
+            catch (ArgumentException e)
+            {
+                return NotFound(e.Message);
+            }
 
         }
         [HttpPost]
@@ -26,11 +28,7 @@ namespace TicketApp.Api.Controllers
         {
             try
             {
-                if (!context.Projects.Any(p => p.Id == request.ProjectId))
-                    return BadRequest("Project id is invalid.");
-                var ticket = new Ticket(request.Title, request.Description, request.ProjectId, request.DueDate, request.Priority);
-                context.Tickets.Add(ticket);
-                context.SaveChanges();
+                var ticket = ticketService.Create(request);
 
                 return CreatedAtAction(nameof(GetTicket), new { ticket.Id }, ticket);
             }
@@ -43,20 +41,16 @@ namespace TicketApp.Api.Controllers
         [HttpGet("queue")]
         public List<Ticket> GetQueue()
         {
-            return context.Tickets.AsNoTracking().Where(t => t.Status != TicketStatus.Resolved && t.Status != TicketStatus.Closed).OrderByDescending(t => t.Priority).ThenBy(t => !t.DueDate.HasValue).ThenBy(t => t.DueDate).ToList();
+            return ticketService.GetQueue();
         }
 
         [HttpPut("{id}")]
         public ActionResult<Ticket> UpdateTicket(int id, [FromBody] UpdateTicketRequest request)
         {
-            var ticket = context.Tickets.FirstOrDefault(t => t.Id == id);
-            if (ticket is null)
-                return NotFound();
+
             try
             {
-                ticket.Update(request.Title, request.Description, request.DueDate, request.ProjectId);
-                context.SaveChanges();
-                return Ok(ticket);
+                return Ok(ticketService.Update(id, request));
             }
             catch (ArgumentException e)
             {
@@ -66,90 +60,85 @@ namespace TicketApp.Api.Controllers
         [HttpPost("{id}/start")]
         public ActionResult<Ticket> StartProgress(int id)
         {
-            var ticket = context.Tickets.FirstOrDefault(t => t.Id == id);
-            if (ticket is null)
-                return NotFound();
-
             try
             {
-                ticket.StartProgress();
-                context.SaveChanges();
-                return Ok(ticket);
+                return Ok(ticketService.StartProgress(id));
             }
             catch (InvalidOperationException e)
             {
                 return Conflict(e.Message);
+            }
+            catch (ArgumentException e)
+            {
+                return NotFound(e.Message);
             }
         }
         [HttpPost("{id}/resolve")]
         public ActionResult<Ticket> Resolve(int id)
         {
-
-            var ticket = context.Tickets.FirstOrDefault(t => t.Id == id);
-            if (ticket is null)
-                return NotFound();
             try
             {
-                ticket.Resolve();
-                context.SaveChanges();
-                return Ok(ticket);
+                return Ok(ticketService.Resolve(id));
             }
-
             catch (InvalidOperationException e)
             {
                 return Conflict(e.Message);
+            }
+            catch (ArgumentException e)
+            {
+                return NotFound(e.Message);
             }
         }
         [HttpPost("{id}/close")]
         public ActionResult<Ticket> Close(int id)
         {
-            var ticket = context.Tickets.FirstOrDefault(t => t.Id == id);
-            if (ticket is null) return NotFound();
             try
             {
-                ticket.Close();
-                context.SaveChanges();
-                return Ok(ticket);
+                return Ok(ticketService.Close(id));
             }
             catch (InvalidOperationException e)
             {
                 return Conflict(e.Message);
+            }
+            catch (ArgumentException e)
+            {
+                return NotFound(e.Message);
             }
         }
 
         [HttpPost("{id}/reopen")]
         public ActionResult<Ticket> Reopen(int id)
         {
-            var ticket = context.Tickets.FirstOrDefault(t => t.Id == id);
-            if (ticket is null) return NotFound();
             try
             {
-                ticket.Reopen();
-                context.SaveChanges();
-                return Ok(ticket);
+                return Ok(ticketService.Reopen(id));
             }
             catch (InvalidOperationException e)
             {
                 return Conflict(e.Message);
             }
+            catch (ArgumentException e)
+            {
+                return NotFound(e.Message);
+            }
         }
         [HttpDelete("{id}")]
         public IActionResult DeleteTicket(int id)
         {
-            int deleted = context.Tickets.Where(t => t.Id == id).ExecuteDelete();
-            if (deleted == 0)
-                return NotFound();
-            return NoContent();
+            try
+            {
+                ticketService.Delete(id);
+                return NoContent();
+            }
+            catch (ArgumentException e)
+            {
+                return NotFound(e.Message);
+            }
         }
-        // store.DeleteTicket(id) ? NoContent() : NotFound();
         [HttpGet]
         public List<Ticket> GetAll(TicketStatus? status, TicketPriority? priority, bool overdue)
         {
-            IQueryable<Ticket> query = context.Tickets.AsNoTracking();
-            if (status is not null) query = query.Where(t => t.Status == status);
-            if (priority is not null) query = query.Where(t => t.Priority == priority);
-            if (overdue) query = query.Where(t => t.DueDate < DateOnly.FromDateTime(DateTime.Today) && t.Status != TicketStatus.Closed);
-            return query.ToList();
+            return ticketService.GetAll(status, priority, overdue);
         }
     }
 }
