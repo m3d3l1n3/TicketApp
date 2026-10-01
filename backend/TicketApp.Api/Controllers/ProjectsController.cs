@@ -13,11 +13,11 @@ namespace TicketApp.Api.Controllers
             this.projectService = projectService;
         }
         [HttpGet("{id}")]
-        public ActionResult<Project> GetProject(int id)
+        public async Task<ActionResult<Project>> GetProject(int id)
         {
             try
             {
-                return Ok(projectService.GetProject(id));
+                return Ok(await projectService.GetProject(id));
             }
             catch (ArgumentException e)
             {
@@ -25,16 +25,16 @@ namespace TicketApp.Api.Controllers
             }
         }
         [HttpGet]
-        public ActionResult<List<Project>> GetProjects()
+        public async Task<ActionResult<List<Project>>> GetProjects()
         {
-            return Ok(projectService.GetProjects());
+            return Ok(await projectService.GetProjects());
         }
         [HttpGet("{id}/report")]
-        public ActionResult<ProjectReport> GetProjectReport(int id)
+        public async Task<ActionResult<ProjectReport>> GetProjectReport(int id)
         {
             try
             {
-                return Ok(projectService.GetProjectReport(id));
+                return Ok(await projectService.GetProjectReport(id));
             }
             catch (ArgumentException e)
             {
@@ -42,11 +42,11 @@ namespace TicketApp.Api.Controllers
             }
         }
         [HttpPost]
-        public ActionResult<Project> CreateProject([FromBody] CreateProjectRequest request)
+        public async Task<ActionResult<Project>> CreateProject([FromBody] CreateProjectRequest request)
         {
             try
             {
-                Project project = projectService.CreateProject(request);
+                var project = await projectService.CreateProject(request);
                 return CreatedAtAction(nameof(GetProject), new { project.Id }, project);
             }
             catch (ArgumentException e)

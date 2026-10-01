@@ -1,43 +1,43 @@
 using TicketApp.Api.Models;
 using TicketApp.Api.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 namespace TicketApp.Api.Services;
 
 public class ProjectService : IProjectService
 {
     private readonly AppDbContext context;
     public ProjectService(AppDbContext context) { this.context = context; }
-    public Project GetProject(int id)
+    public async Task<Project> GetProject(int id)
     {
-        var project = context.Projects.AsNoTracking().FirstOrDefault(p => p.Id == id);
+        var project = await context.Projects.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
         if (project is null)
             throw new ArgumentException($"Project with {id} does not exist.");
         return project;
     }
-    public List<Project> GetProjects()
+    public async Task<List<Project>> GetProjects()
     {
-        return context.Projects.AsNoTracking().OrderBy(p => p.Name).ToList();
+        return await context.Projects.AsNoTracking().OrderBy(p => p.Name).ToListAsync();
 
     }
-    public ProjectReport GetProjectReport(int id)
+    public async Task<ProjectReport> GetProjectReport(int id)
     {
-        if (context.Projects.FirstOrDefault(p => p.Id == id) is null)
+        if (await context.Projects.FirstOrDefaultAsync(p => p.Id == id) is null)
             throw new ArgumentException($"Project with {id} does not exist");
 
-        int total = context.Tickets.Count(t => t.ProjectId == id);
-        int open = context.Tickets.Count(t => t.ProjectId == id && t.Status != TicketStatus.Resolved && t.Status != TicketStatus.Closed);
-        int overdue = context.Tickets.Count(t => t.ProjectId == id && t.DueDate < DateOnly.FromDateTime(DateTime.Today) && t.Status != TicketStatus.Closed);
-        var ticket = context.Tickets.Where(t => t.ProjectId == id && t.DueDate >= DateOnly.FromDateTime(DateTime.Today)).OrderBy(t => !t.DueDate.HasValue).ThenBy(t => t.DueDate).FirstOrDefault();
+        var total = await context.Tickets.CountAsync(t => t.ProjectId == id);
+        var open = await context.Tickets.CountAsync(t => t.ProjectId == id && t.Status != TicketStatus.Resolved && t.Status != TicketStatus.Closed);
+        var overdue = await context.Tickets.CountAsync(t => t.ProjectId == id && t.DueDate < DateOnly.FromDateTime(DateTime.Today) && t.Status != TicketStatus.Closed);
+        var ticket = await context.Tickets.Where(t => t.ProjectId == id && t.DueDate >= DateOnly.FromDateTime(DateTime.Today)).OrderBy(t => !t.DueDate.HasValue).ThenBy(t => t.DueDate).FirstOrDefaultAsync();
         ProjectReport report = new(id, total, open, overdue, ticket?.DueDate);
         return report;
     }
-    public Project CreateProject(CreateProjectRequest request)
+    public async Task<Project> CreateProject(CreateProjectRequest request)
     {
 
         Project project = new(request.Name, request.Description);
         context.Projects.Add(project);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
         return project;
-
     }
 }

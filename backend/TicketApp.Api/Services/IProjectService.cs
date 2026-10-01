@@ -4,9 +4,9 @@ namespace TicketApp.Api.Services;
 
 public interface IProjectService
 {
-    Project GetProject(int id);
-    List<Project> GetProjects();
-    ProjectReport GetProjectReport(int id);
-    Project CreateProject(CreateProjectRequest request);
+    Task<Project> GetProject(int id);
+    Task<List<Project>> GetProjects();
+    Task<ProjectReport> GetProjectReport(int id);
+    Task<Project> CreateProject(CreateProjectRequest request);
 
 }

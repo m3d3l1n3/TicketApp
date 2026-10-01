@@ -11,11 +11,11 @@ namespace TicketApp.Api.Controllers
         public TicketsController(ITicketService ticketService) { this.ticketService = ticketService; }
 
         [HttpGet("{id}")]
-        public ActionResult<Ticket> GetTicket(int id)
+        public async Task<ActionResult<Ticket>> GetTicket(int id)
         {
             try
             {
-                return Ok(ticketService.GetTicket(id));
+                return Ok(await ticketService.GetTicket(id));
             }
             catch (ArgumentException e)
             {
@@ -24,11 +24,11 @@ namespace TicketApp.Api.Controllers
 
         }
         [HttpPost]
-        public ActionResult<Ticket> CreateTicket([FromBody] CreateTicketRequest request)
+        public async Task<ActionResult<Ticket>> CreateTicket([FromBody] CreateTicketRequest request)
         {
             try
             {
-                var ticket = ticketService.Create(request);
+                var ticket = await ticketService.Create(request);
 
                 return CreatedAtAction(nameof(GetTicket), new { ticket.Id }, ticket);
             }
@@ -39,18 +39,18 @@ namespace TicketApp.Api.Controllers
         }
 
         [HttpGet("queue")]
-        public List<Ticket> GetQueue()
+        public async Task<List<Ticket>> GetQueue()
         {
-            return ticketService.GetQueue();
+            return await ticketService.GetQueue();
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Ticket> UpdateTicket(int id, [FromBody] UpdateTicketRequest request)
+        public async Task<ActionResult<Ticket>> UpdateTicket(int id, [FromBody] UpdateTicketRequest request)
         {
 
             try
             {
-                return Ok(ticketService.Update(id, request));
+                return Ok(await ticketService.Update(id, request));
             }
             catch (ArgumentException e)
             {
@@ -58,11 +58,11 @@ namespace TicketApp.Api.Controllers
             }
         }
         [HttpPost("{id}/start")]
-        public ActionResult<Ticket> StartProgress(int id)
+        public async Task<ActionResult<Ticket>> StartProgress(int id)
         {
             try
             {
-                return Ok(ticketService.StartProgress(id));
+                return Ok(await ticketService.StartProgress(id));
             }
             catch (InvalidOperationException e)
             {
@@ -74,11 +74,11 @@ namespace TicketApp.Api.Controllers
             }
         }
         [HttpPost("{id}/resolve")]
-        public ActionResult<Ticket> Resolve(int id)
+        public async Task<ActionResult<Ticket>> Resolve(int id)
         {
             try
             {
-                return Ok(ticketService.Resolve(id));
+                return Ok(await ticketService.Resolve(id));
             }
             catch (InvalidOperationException e)
             {
@@ -90,11 +90,11 @@ namespace TicketApp.Api.Controllers
             }
         }
         [HttpPost("{id}/close")]
-        public ActionResult<Ticket> Close(int id)
+        public async Task<ActionResult<Ticket>> Close(int id)
         {
             try
             {
-                return Ok(ticketService.Close(id));
+                return Ok(await ticketService.Close(id));
             }
             catch (InvalidOperationException e)
             {
@@ -107,11 +107,11 @@ namespace TicketApp.Api.Controllers
         }
 
         [HttpPost("{id}/reopen")]
-        public ActionResult<Ticket> Reopen(int id)
+        public async Task<ActionResult<Ticket>> Reopen(int id)
         {
             try
             {
-                return Ok(ticketService.Reopen(id));
+                return Ok(await ticketService.Reopen(id));
             }
             catch (InvalidOperationException e)
             {
@@ -123,11 +123,11 @@ namespace TicketApp.Api.Controllers
             }
         }
         [HttpDelete("{id}")]
-        public IActionResult DeleteTicket(int id)
+        public async Task<IActionResult> DeleteTicket(int id)
         {
             try
             {
-                ticketService.Delete(id);
+                await ticketService.Delete(id);
                 return NoContent();
             }
             catch (ArgumentException e)
@@ -136,9 +136,9 @@ namespace TicketApp.Api.Controllers
             }
         }
         [HttpGet]
-        public List<Ticket> GetAll(TicketStatus? status, TicketPriority? priority, bool overdue)
+        public async Task<List<Ticket>> GetAll(TicketStatus? status, TicketPriority? priority, bool overdue)
         {
-            return ticketService.GetAll(status, priority, overdue);
+            return await ticketService.GetAll(status, priority, overdue);
         }
     }
 }

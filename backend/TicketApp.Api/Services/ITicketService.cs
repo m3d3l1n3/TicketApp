@@ -4,16 +4,16 @@ namespace TicketApp.Api.Services;
 
 public interface ITicketService
 {
-    Ticket GetTicket(int id);
-    Ticket Create(CreateTicketRequest request);
-    Ticket Update(int id, UpdateTicketRequest request);
-    void Delete(int id);
-    Ticket StartProgress(int id);
-    Ticket Resolve(int id);
-    Ticket Close(int id);
-    Ticket Reopen(int id);
-    List<Ticket> GetQueue();
-    List<Ticket> GetAll(TicketStatus? status, TicketPriority? priority, bool overdue);
+    Task<Ticket> GetTicket(int id);
+    Task<Ticket> Create(CreateTicketRequest request);
+    Task<Ticket> Update(int id, UpdateTicketRequest request);
+    Task Delete(int id);
+    Task<Ticket> StartProgress(int id);
+    Task<Ticket> Resolve(int id);
+    Task<Ticket> Close(int id);
+    Task<Ticket> Reopen(int id);
+    Task<List<Ticket>> GetQueue();
+    Task<List<Ticket>> GetAll(TicketStatus? status, TicketPriority? priority, bool overdue);
 
 
 }
