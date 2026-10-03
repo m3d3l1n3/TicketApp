@@ -24,3 +24,17 @@ export interface Ticket {
   dueDate: string | null;  // "2026-10-01" or null
   projectId: number;
 }
+
+export const PRIORITY_LABELS: Record<TicketPriority, string> =   {
+  [TicketPriority.Low]: "Low",
+  [TicketPriority.Medium]: "Medium",
+  [TicketPriority.High]: "High",
+  [TicketPriority.Critical]: "Critical",
+};
+
+export const STATUS_LABELS: Record<TicketStatus, string> ={
+[TicketStatus.Open]: "Open",
+[TicketStatus.InProgress]: "InProgress",
+[TicketStatus.Resolved]: "Resolved",
+[TicketStatus.Closed]: "Closed",
+};
