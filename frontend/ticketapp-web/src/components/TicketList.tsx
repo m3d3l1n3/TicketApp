@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import type { Ticket } from "../types";
 import { TicketRow } from "./TicketRow";
 
@@ -7,7 +8,7 @@ export function TicketList() {
   const [tickets, setTickets] = useState<Ticket[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
- // 2. SIDE WORK — fetch once, after first render
+  // 2. SIDE WORK — fetch once, after first render
   useEffect(() => {
     async function load() {
       try {
@@ -25,10 +26,13 @@ export function TicketList() {
   if (error) return <p>Failed to load: {error}</p>;
   if (tickets === null) return <p>Loading…</p>;
   return (
-    <ul>
-  {tickets.map((t) => (
-    <TicketRow key={t.id} ticket={t} />
-  ))}
-</ul>
+    <div>
+      <Link to="/tickets/new"> ticket</Link>
+      <ul>
+        {tickets.map((t) => (
+          <TicketRow key={t.id} ticket={t} />
+        ))}
+      </ul>
+    </div>
   );
 }

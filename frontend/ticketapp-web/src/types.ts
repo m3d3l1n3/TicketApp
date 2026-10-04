@@ -11,30 +11,36 @@ export const TicketPriority = {
   Medium: 1,
   High: 2,
   Critical: 3,
-}
-export type TicketPriority = (typeof TicketPriority)[keyof typeof TicketPriority];
+};
+export type TicketPriority =
+  (typeof TicketPriority)[keyof typeof TicketPriority];
 
 export interface Ticket {
   id: number;
   title: string;
   description: string;
-  status: TicketStatus;    // serialized as a NUMBER by your API
+  status: TicketStatus; // serialized as a NUMBER by your API
   priority: TicketPriority;
-  createdAt: string;       // ISO datetime, e.g. "2026-09-30T14:24:18.Z"
-  dueDate: string | null;  // "2026-10-01" or null
+  createdAt: string; // ISO datetime, e.g. "2026-09-30T14:24:18.Z"
+  dueDate: string | null; // "2026-10-01" or null
   projectId: number;
 }
+export interface Project {
+  id: number;
+  name: string;
+  description: string;
+}
 
-export const PRIORITY_LABELS: Record<TicketPriority, string> =   {
+export const PRIORITY_LABELS: Record<TicketPriority, string> = {
   [TicketPriority.Low]: "Low",
   [TicketPriority.Medium]: "Medium",
   [TicketPriority.High]: "High",
   [TicketPriority.Critical]: "Critical",
 };
 
-export const STATUS_LABELS: Record<TicketStatus, string> ={
-[TicketStatus.Open]: "Open",
-[TicketStatus.InProgress]: "InProgress",
-[TicketStatus.Resolved]: "Resolved",
-[TicketStatus.Closed]: "Closed",
+export const STATUS_LABELS: Record<TicketStatus, string> = {
+  [TicketStatus.Open]: "Open",
+  [TicketStatus.InProgress]: "InProgress",
+  [TicketStatus.Resolved]: "Resolved",
+  [TicketStatus.Closed]: "Closed",
 };

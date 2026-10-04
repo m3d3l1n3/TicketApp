@@ -10,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TicketAppDb")));
-builder.Services.AddCors(options => options.AddPolicy("Frontend", policy => policy.WithOrigins("http://localhost:5173")));
+builder.Services.AddCors(options => options.AddPolicy("Frontend", policy => policy.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod()));
 
 var app = builder.Build();
 app.UseCors("Frontend");
